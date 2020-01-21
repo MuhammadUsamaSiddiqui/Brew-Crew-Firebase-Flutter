@@ -101,6 +101,38 @@ class _SignInState extends State<SignIn> {
                         }
                       },
                     ),
+                    SizedBox(height: 20.0),
+                    RaisedButton(
+                      color: Colors.pink[400],
+                      child: Text('Sign In with Google',
+                          style: TextStyle(color: Colors.white)),
+                      onPressed: () async {
+                        setState(() => displayLoader = true);
+                        dynamic result = await _authService.signInWithGoogle();
+                        if (result == null) {
+                          setState(() {
+                            error = 'Can not Sign In';
+                            displayLoader = false;
+                          });
+                        }
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    RaisedButton(
+                      color: Colors.pink[400],
+                      child: Text('Sign In with Facebook',
+                          style: TextStyle(color: Colors.white)),
+                      onPressed: () async {
+                        setState(() => displayLoader = true);
+                        /* dynamic result = await _authService.signInWithGoogle();
+                        if (result == null) {
+                          setState(() {
+                            error = 'Can not Sign In';
+                            displayLoader = false;
+                          });
+                        }*/
+                      },
+                    ),
                     SizedBox(height: 12.0),
                     Text(
                       error,

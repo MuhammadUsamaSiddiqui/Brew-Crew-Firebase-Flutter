@@ -1,9 +1,11 @@
 import 'package:brew_crew/models/user.dart';
 import 'package:brew_crew/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  GoogleSignIn _googleSignIn;
 
   // create user object based on Firebase object
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -37,6 +39,32 @@ class AuthService {
           email: email, password: password);
       FirebaseUser user = result.user;
       return _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // sign In with google
+  Future signInWithGoogle() async {
+    _googleSignIn = GoogleSignIn(scopes: ['email']);
+
+    try {
+      GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+      if (googleSignInAccount != null) {
+        AuthResult authResult = await _auth.signInWithCredential(
+            GoogleAuthProvider.getCredential(
+                idToken: (await googleSignInAccount.authentication).idToken,
+                accessToken:
+                    (await googleSignInAccount.authentication).accessToken));
+
+        FirebaseUser user = authResult.user;
+        // create a new document for the user with the uid
+        await DatabaseService(uid: user.uid)
+            .updateUserData('0', 'Anonymous', 100);
+
+        return _userFromFirebaseUser(user);
+      }
     } catch (e) {
       print(e.toString());
       return null;
