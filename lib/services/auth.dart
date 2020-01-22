@@ -1,11 +1,13 @@
 import 'package:brew_crew/models/user.dart';
 import 'package:brew_crew/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   GoogleSignIn _googleSignIn;
+  FacebookLogin _facebookLogin;
 
   // create user object based on Firebase object
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -59,6 +61,31 @@ class AuthService {
                     (await googleSignInAccount.authentication).accessToken));
 
         FirebaseUser user = authResult.user;
+        // create a new document for the user with the uid
+        await DatabaseService(uid: user.uid)
+            .updateUserData('0', 'Anonymous', 100);
+
+        return _userFromFirebaseUser(user);
+      }
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // sign In with Facebook
+  Future signInWithFacebook() async {
+    try {
+      _facebookLogin = FacebookLogin();
+      FacebookLoginResult facebookLoginResult =
+          await _facebookLogin.logIn(['email', 'public_profile']);
+      if (facebookLoginResult.status == FacebookLoginStatus.loggedIn) {
+        AuthResult authResult = await _auth.signInWithCredential(
+            FacebookAuthProvider.getCredential(
+                accessToken: (facebookLoginResult.accessToken).token));
+
+        FirebaseUser user = authResult.user;
+
         // create a new document for the user with the uid
         await DatabaseService(uid: user.uid)
             .updateUserData('0', 'Anonymous', 100);

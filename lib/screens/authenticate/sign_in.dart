@@ -124,13 +124,13 @@ class _SignInState extends State<SignIn> {
                           style: TextStyle(color: Colors.white)),
                       onPressed: () async {
                         setState(() => displayLoader = true);
-                        /* dynamic result = await _authService.signInWithGoogle();
+                         dynamic result = await _authService.signInWithFacebook();
                         if (result == null) {
                           setState(() {
                             error = 'Can not Sign In';
                             displayLoader = false;
                           });
-                        }*/
+                        }
                       },
                     ),
                     SizedBox(height: 12.0),

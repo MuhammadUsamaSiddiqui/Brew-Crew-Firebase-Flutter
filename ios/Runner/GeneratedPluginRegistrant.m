@@ -22,6 +22,12 @@
 @import firebase_core;
 #endif
 
+#if __has_include(<flutter_facebook_login/FacebookLoginPlugin.h>)
+#import <flutter_facebook_login/FacebookLoginPlugin.h>
+#else
+@import flutter_facebook_login;
+#endif
+
 #if __has_include(<google_sign_in/FLTGoogleSignInPlugin.h>)
 #import <google_sign_in/FLTGoogleSignInPlugin.h>
 #else
@@ -34,6 +40,7 @@
   [FLTCloudFirestorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTCloudFirestorePlugin"]];
   [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
+  [FacebookLoginPlugin registerWithRegistrar:[registry registrarForPlugin:@"FacebookLoginPlugin"]];
   [FLTGoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleSignInPlugin"]];
 }
 
